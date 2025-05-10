@@ -16,5 +16,9 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 5000
 
+# Add before CMD
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 # Command to run the application
 CMD ["python", "r_app.py"]
