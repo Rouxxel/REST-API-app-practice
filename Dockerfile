@@ -20,5 +20,8 @@ EXPOSE 5000
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Command to run the application
-CMD ["python", "r_app.py"]
+# Expose the port the app runs on
+EXPOSE 5000
+
+# Command to run the application using Gunicorn for production
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "r_app:app"]
