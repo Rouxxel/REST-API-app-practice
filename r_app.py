@@ -1,14 +1,6 @@
 from flask import Flask, request, jsonify
-from algorithms import (
-    Bub_sort,
-    Merge_sort,
-    Quick_sort,
-    Bin_search,
-    Sorted_list,
-    DFS,
-    BFS,
-)  # Import your classes
-from collections import deque
+from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
+from algorithms.search import Bin_search, DFS, BFS
 
 app = Flask(__name__)
 
@@ -32,8 +24,8 @@ def sort_numbers():
     if not sorter:
         return jsonify({"error": "Unknown algorithm"}), 400
 
-    if algorithm.lower() == "quick" or algorithm.lower() == "merge":
-        sorted_data = sorter.sort(ascending, data, 0, len(data)-1)
+    if algorithm.lower() in ["quick", "merge"]:
+        sorted_data = sorter.sort(ascending, data, 0, len(data) - 1)
     else:
         sorted_data = sorter.sort(ascending, data)
 
@@ -47,7 +39,7 @@ def binary_search():
     if data is None or target is None:
         return jsonify({"error": "Invalid input"}), 400
 
-    if not Sorted_list().is_sorted_asc(True, data):
+    if not Sorted_checker().is_sorted_asc(True, data):
         return jsonify({"error": "Input data must be sorted in ascending order"}), 400
 
     searcher = Bin_search()
@@ -62,7 +54,7 @@ def is_sorted():
     if data is None or ascending is None:
         return jsonify({"error": "Invalid input"}), 400
 
-    checker = Sorted_list()
+    checker = Sorted_checker()
     result = checker.is_sorted_asc(ascending, data)
     return jsonify({"is_sorted": result})
 
