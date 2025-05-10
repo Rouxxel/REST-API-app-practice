@@ -1,0 +1,30 @@
+#Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+#Virtual environment
+venv/
+.env/
+.env.*
+
+#macOS files
+.DS_Store
+
+#Git
+.git
+.gitignore
+
+#Docker files themselves
+Dockerfile
+.dockerignore
+
+#IDE/editor folders
+.vscode/
+.idea/
+
+#Logs
+*.log
+
+#Test folders
+tests/
