@@ -3,14 +3,11 @@ from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
 from algorithms.search import Bin_search, DFS, BFS
 import logging
 
-app = Flask(__name__)
-
 #Set up basic logging configuration
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 )
-
 #Create a log_handler for the application
 log_handler = logging.getLogger(__name__)
 logging.debug("log_handler set up and initialized")
