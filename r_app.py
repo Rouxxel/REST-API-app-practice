@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_caching import Cache
+from celery_worker.celery_worker import create_celery
 from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
 from algorithms.search import Bin_search, DFS, BFS
 import logging
 
+"""Logging"""
 #Set up basic logging configuration
 logging.basicConfig(
     level=logging.INFO,
@@ -13,14 +15,66 @@ logging.basicConfig(
 log_handler = logging.getLogger(__name__)
 logging.debug("log_handler set up and initialized")
 
-#Flask app
+"""Flask app"""
 app = Flask(__name__)
 
+"""Caching"""
 #Initialize the Flask-Caching extension
 app.config['CACHE_TYPE'] = 'SimpleCache'  # Using simple in-memory cache
 app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # Cache timeout in seconds (5 minutes)
 cache = Cache(app)
 
+"""Celery asynchronous"""
+app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379/0',  #Redis as broker
+    CELERY_RESULT_BACKEND='redis://localhost:6379/0',  #Redis for storing task results
+)
+celery = create_celery(app)
+
+"""Celery related"""
+#Celery task definition to sort numbers asynchronously
+@celery.task(bind=True)
+def async_sort_task(self, data, algorithm, ascending):
+    try:
+        # Map algorithm names to classes
+        algorithms = {
+            "bubble": Bub_sort(),
+            "merge": Merge_sort(),
+            "quick": Quick_sort(),
+        }
+        sorter = algorithms.get(algorithm.lower())
+        if not sorter:
+            raise Exception("Unknown algorithm")
+        if algorithm.lower() in ["quick", "merge"]:
+            return sorter.sort(ascending, data, 0, len(data) - 1)
+        else:
+            return sorter.sort(ascending, data)
+    except Exception as e:
+        raise self.retry(exc=e)
+
+#Celery task for binary search asynchronously
+@celery.task(bind=True)
+def async_binary_search_task(self, data, target):
+    try:
+        if not Sorted_checker().is_sorted_asc(True, data):
+            raise Exception("Input data is not sorted in ascending order")
+        searcher = Bin_search()
+        found = searcher.search(data, target)
+        return found
+    except Exception as e:
+        raise self.retry(exc=e)
+
+#Celery task for checking if the data is sorted asynchronously
+@celery.task(bind=True)
+def async_sorted_checker_task(self, data, ascending):
+    try:
+        checker = Sorted_checker()
+        result = checker.is_sorted_asc(ascending, data)
+        return result
+    except Exception as e:
+        raise self.retry(exc=e)
+
+"""Routes"""
 @app.route('/sort', methods=['POST'])
 @cache.cached(key_prefix='sort_')  #Caching sorted results
 def sort_numbers():
