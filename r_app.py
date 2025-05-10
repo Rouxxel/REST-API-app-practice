@@ -16,6 +16,7 @@ app = Flask(__name__)
 def sort_numbers():
     data = request.json.get('data')
     algorithm = request.json.get('algorithm')
+    ascending = request.json.get('ascending', True)
 
     if not data or not algorithm:
         return jsonify({"error": "Invalid input"}), 400
@@ -31,7 +32,11 @@ def sort_numbers():
     if not sorter:
         return jsonify({"error": "Unknown algorithm"}), 400
 
-    sorted_data = sorter.sort(data)
+    if algorithm.lower() == "quick" or algorithm.lower() == "merge":
+        sorted_data = sorter.sort(ascending, data, 0, len(data)-1)
+    else:
+        sorted_data = sorter.sort(ascending, data)
+
     return jsonify({"sorted_data": sorted_data})
 
 @app.route('/binary_search', methods=['POST'])
@@ -41,6 +46,9 @@ def binary_search():
 
     if data is None or target is None:
         return jsonify({"error": "Invalid input"}), 400
+
+    if not Sorted_list().is_sorted_asc(True, data):
+        return jsonify({"error": "Input data must be sorted in ascending order"}), 400
 
     searcher = Bin_search()
     found = searcher.search(data, target)
@@ -69,13 +77,13 @@ def graph_search():
 
     if algorithm.lower() == "dfs":
         dfs = DFS()
-        dfs.search(graph, start)
-        return jsonify({"message": "DFS complete, check logs for output."})
+        visited = dfs.search(graph, start)
+        return jsonify({"visited": visited})
 
     elif algorithm.lower() == "bfs":
         bfs = BFS()
-        bfs.search(graph, start)
-        return jsonify({"message": "BFS complete, check logs for output."})
+        visited = bfs.search(graph, start)
+        return jsonify({"visited": visited})
 
     else:
         return jsonify({"error": "Unknown algorithm"}), 400
