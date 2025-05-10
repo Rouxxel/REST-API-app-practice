@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_caching import Cache
 from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
 from algorithms.search import Bin_search, DFS, BFS
 import logging
@@ -12,9 +13,16 @@ logging.basicConfig(
 log_handler = logging.getLogger(__name__)
 logging.debug("log_handler set up and initialized")
 
+#Flask app
 app = Flask(__name__)
 
+#Initialize the Flask-Caching extension
+app.config['CACHE_TYPE'] = 'SimpleCache'  # Using simple in-memory cache
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300  # Cache timeout in seconds (5 minutes)
+cache = Cache(app)
+
 @app.route('/sort', methods=['POST'])
+@cache.cached(key_prefix='sort_')  #Caching sorted results
 def sort_numbers():
     try:
         data = request.json.get('data')
@@ -66,6 +74,7 @@ def sort_numbers():
         return jsonify({"error": "An unexpected error occurred. Please try again later."}), 500
 
 @app.route('/binary_search', methods=['POST'])
+@cache.cached(key_prefix='binary_search_')  #Caching search results
 def binary_search():
     try:
         data = request.json.get('data')
@@ -99,6 +108,7 @@ def binary_search():
         return jsonify({"error": "An unexpected error occurred. Please try again later."}), 500
 
 @app.route('/is_sorted', methods=['POST'])
+@cache.cached(key_prefix='is_sorted_')  #Caching results for sorted check
 def is_sorted():
     try:
         data = request.json.get('data')
@@ -127,6 +137,7 @@ def is_sorted():
         return jsonify({"error": "An unexpected error occurred. Please try again later."}), 500
 
 @app.route('/search', methods=['POST'])
+@cache.cached(key_prefix='graph_search_') #Caching searched results
 def graph_search():
     try:
         graph = request.json.get('graph')
