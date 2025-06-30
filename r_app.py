@@ -4,6 +4,7 @@ from celery_worker.celery_worker import create_celery
 from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
 from algorithms.search import Bin_search, DFS, BFS
 import logging
+import os
 
 """Logging"""
 #Set up basic logging configuration
@@ -18,6 +19,12 @@ logging.debug("log_handler set up and initialized")
 """Flask app"""
 app = Flask(__name__)
 
+"""app config"""
+app.config.update(
+    CELERY_BROKER_URL=os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0"),
+    CELERY_RESULT_BACKEND=os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0"),
+)
+
 """Caching"""
 #Initialize the Flask-Caching extension
 app.config['CACHE_TYPE'] = 'SimpleCache'  # Using simple in-memory cache
@@ -26,8 +33,8 @@ cache = Cache(app)
 
 """Celery asynchronous"""
 app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379/0',  #Redis as broker
-    CELERY_RESULT_BACKEND='redis://localhost:6379/0',  #Redis for storing task results
+    CELERY_BROKER_URL=os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0"), #Redis as broker
+    CELERY_RESULT_BACKEND=os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0"), #Redis for storing task results
 )
 celery = create_celery(app)
 

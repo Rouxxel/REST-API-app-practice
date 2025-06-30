@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+echo '__pycache__/\n*.pyc\n*.log\n.env\ngit\n.gitignore' > .dockerignore
 
 #Virtual environment
 venv/

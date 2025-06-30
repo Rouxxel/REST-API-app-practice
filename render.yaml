@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: flask-api
+    env: docker
+    plan: free
+    repo: https://github.com/YOUR_USERNAME/YOUR_REPO
+    branch: main
+    dockerfilePath: ./Dockerfile
+    buildCommand: docker-compose build
+    startCommand: docker-compose up app
+
+  - type: worker
+    name: celery-worker
+    env: docker
+    dockerfilePath: ./Dockerfile
+    startCommand: celery -A celery_worker.celery_worker.celery worker --loglevel=info
+
+  - type: redis
+    name: redis
+    ipAllowList: []
+    plan: free
