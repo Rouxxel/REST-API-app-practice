@@ -62,6 +62,9 @@ Flask==2.2.2
 Flask-Caching==2.3.1
 celery==5.5.2
 redis==6.0.0
+gunicorn==20.1.0
+Werkzeug>=2.1,<3.0
+pytest==6.2.4
 ```
 
 # Docker Setup
@@ -100,10 +103,13 @@ You can run both the Flask app and Redis using Docker Compose, which simplifies 
 Create a docker-compose.yml file:
 
 ```yaml
-version: '3'
+version: '3.8'
 services:
   app:
     build: .
+    command: gunicorn -b 0.0.0.0:5000 r_app:app
+    volumes:
+      - .:/app
     ports:
       - "5000:5000"
     environment:
@@ -111,8 +117,15 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - redis
+  celery:
+    build: .
+    command: celery -A celery_worker.celery_worker.celery worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
   redis:
-    image: redis:alpine
+    image: "redis:alpine"
     ports:
       - "6379:6379"
 ```
@@ -126,6 +139,8 @@ docker-compose up --build
 ### Access the API:
 
 Once the containers are up and running, the Flask app will be accessible at `http://localhost:5000`. You can now make requests to the API using tools like Postman or cURL.
+
+It should also be possible to deploy this API in platforms like Render by creating an Background Worker for the celery worker (because this is what will allow the asynchronous handle of tasks) and a Web Service for the program itself. This will allow to make request through the internet anywhere but be aware of possible costs of deployment in the platform of your choosing.
 
 ### Running Unit Tests:
 
