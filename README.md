@@ -41,11 +41,11 @@ Additionally, this project includes:
 ## Project Structure
 
 The project has been refactored into modules to keep the code clean and maintainable:
-- `app.py`: Main Flask application and route definitions
+- `r_app.py`: Main Flask application and route definitions
 - `celery_worker.py`: Celery configuration and task definitions
 - `algorithms/sorting.py`: Sorting algorithm classes (Bubble sort, Merge sort, Quick sort)
 - `algorithms/search.py`: Search algorithm classes (Binary Search, DFS, BFS)
-- `tests`: Unit tests for verifying the functionality of the application
+- `unit_tests`: Unit tests for verifying the functionality of the application
 
 ## Requirements
 
