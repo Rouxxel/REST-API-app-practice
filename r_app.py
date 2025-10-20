@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_caching import Cache
-from celery_worker.celery_worker import create_celery
-from algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
-from algorithms.search import Bin_search, DFS, BFS
+from src.celery_worker.celery_worker import create_celery
+from src.algorithms.sorting import Bub_sort, Merge_sort, Quick_sort, Sorted_checker
+from src.algorithms.search import Bin_search, DFS, BFS
 import logging
 import os
 import hashlib

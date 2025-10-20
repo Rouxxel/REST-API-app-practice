@@ -1,5 +1,5 @@
 import unittest
-from algorithms.search import Bin_search, DFS, BFS
+from src.algorithms.search import Bin_search, DFS, BFS
 
 class TestSearchAlgorithms(unittest.TestCase):
 

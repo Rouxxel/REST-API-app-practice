@@ -13,7 +13,7 @@ services:
     name: celery-worker
     env: docker
     dockerfilePath: ./Dockerfile
-    startCommand: celery -A celery_worker.celery_worker.celery worker --loglevel=info
+    startCommand: celery -A src.celery_worker.celery_worker.celery worker --loglevel=info
 
   - type: redis
     name: redis

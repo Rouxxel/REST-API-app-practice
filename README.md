@@ -83,14 +83,21 @@ The project follows a clean, modular architecture for maintainability and scalab
 ```
 REST-API-app-practice/
 ├── r_app.py                    # Main Flask application with enhanced validation and caching
-├── celery_worker/
-│   └── celery_worker.py        # Celery configuration and task definitions
-├── algorithms/
-│   ├── sorting.py              # Sorting algorithm classes (Bubble, Merge, Quick sort)
-│   └── search.py               # Search algorithm classes (Binary Search, DFS, BFS)
-├── unit_tests/
-│   ├── test_sort.py            # Unit tests for sorting algorithms
-│   └── test_search.py          # Unit tests for search algorithms
+├── src/                        # Source code directory
+│   ├── algorithms/
+│   │   ├── __init__.py
+│   │   ├── sorting.py          # Sorting algorithm classes (Bubble, Merge, Quick sort)
+│   │   └── search.py           # Search algorithm classes (Binary Search, DFS, BFS)
+│   ├── celery_worker/
+│   │   ├── __init__.py
+│   │   └── celery_worker.py    # Celery configuration and task definitions
+│   ├── unit_tests/
+│   │   ├── __init__.py
+│   │   ├── test_sort.py        # Unit tests for sorting algorithms
+│   │   └── test_search.py      # Unit tests for search algorithms
+│   └── utils/
+│       ├── __init__.py
+│       └── pycache_n_logs_deleter.py  # Utility for cleaning cache and logs
 ├── docker-compose.yml          # Docker Compose configuration
 ├── Dockerfile                  # Docker container configuration
 ├── requirements.txt            # Python dependencies
@@ -100,9 +107,10 @@ REST-API-app-practice/
 
 ### Key Components:
 - **`r_app.py`**: Enhanced Flask application with comprehensive input validation, smart caching, and improved error handling
-- **`algorithms/`**: Modular algorithm implementations with improved robustness and documentation
-- **`unit_tests/`**: Comprehensive test suite ensuring code reliability and correctness
-- **`celery_worker/`**: Asynchronous task processing configuration for scalable operations
+- **`src/algorithms/`**: Modular algorithm implementations with improved robustness and documentation
+- **`src/unit_tests/`**: Comprehensive test suite ensuring code reliability and correctness
+- **`src/celery_worker/`**: Asynchronous task processing configuration for scalable operations
+- **`src/utils/`**: Utility functions and helper scripts for project maintenance
 
 ## Requirements
 
@@ -201,17 +209,17 @@ It should also be possible to deploy this API in platforms like Render by creati
 
 ### Running Unit Tests:
 
-Unit tests are located in the `unit_tests/` folder. You can run the tests using pytest:
+Unit tests are located in the `src/unit_tests/` folder. You can run the tests using pytest:
 
 ```bash
 # Run all tests with verbose output
-python -m pytest unit_tests/ -v
+python -m pytest src/unit_tests/ -v
 
 # Run specific test file
-python -m pytest unit_tests/test_sort.py -v
+python -m pytest src/unit_tests/test_sort.py -v
 
 # Run tests with coverage (if coverage is installed)
-python -m pytest unit_tests/ --cov=algorithms --cov-report=html
+python -m pytest src/unit_tests/ --cov=src.algorithms --cov-report=html
 ```
 
 This will run all unit tests and verify the functionality of sorting and search algorithms.
@@ -417,11 +425,14 @@ All errors return a consistent JSON structure:
 
 ### Running Tests:
 ```bash
-# Run all tests
-python -m pytest unit_tests/ -v
+# Run all tests with unittest
+python -m unittest discover -s src/unit_tests -v
+
+# Or run with pytest (if available and compatible)
+python -m pytest src/unit_tests/ -v
 
 # Check test results
-# All tests should pass: "10 passed"
+# All tests should pass: "10 tests ... OK"
 ```
 
 ## 📚 Additional Notes

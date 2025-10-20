@@ -1,5 +1,5 @@
 import unittest
-from algorithms.sorting import Bub_sort, Quick_sort, Merge_sort
+from src.algorithms.sorting import Bub_sort, Quick_sort, Merge_sort
 
 class TestSortingAlgorithms(unittest.TestCase):
     
